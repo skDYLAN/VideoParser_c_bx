@@ -39,6 +39,10 @@ $arComponentParameters = array(
             "NAME" => GetMessage("T_IBLOCK_COUNT"),
             "DEFAULT" => "10",
         ),
+        "APIKEY_YOUTUBE" => array(
+            "PARENT" => "BASE",
+            "NAME" => GetMessage("T_APIKEY_YOUTUBE"),
+        ),
 	),
 );
 ?>

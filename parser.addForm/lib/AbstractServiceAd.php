@@ -77,35 +77,40 @@ abstract class AbstractServiceAdapter implements VideoAdInterface
         $this->videoId = $videoId;
     }
 
-    public static function getServiceAd($url){
+    public static function getServiceAd($params){
         $videoHosts = array(
             "YouTube"   => array("youtube.com","youtu.be"),
             "Rutube"    => array("rutube.ru"),
         );
         $result = "";
 
-        $host = parse_url($url, PHP_URL_HOST);
+        $host = parse_url($params->url, PHP_URL_HOST);
 
         foreach ($videoHosts as $hosting => $items)
         {
             foreach ($items as $item) {
-                if (strripos($host, $item))
-                {
 
+                if (strripos($host, $item) !== false)
+                {
                     $result = $hosting;
+
                 }
             }
         }
 
-
         $serviceAd = null;
         if($result === "YouTube")
-            $serviceAd = new YouTubeServiceAd("",$url);
+            $serviceAd = new YouTubeServiceAd($params->url, $params->ApiKey_YouTube);
 
 
         return $serviceAd;
     }
 
+}
+
+class stdParams{
+    public $ApiKey_YouTube;
+    public $url;
 }
 
 

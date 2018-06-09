@@ -14,24 +14,55 @@ class YouTubeServiceAd extends AbstractServiceAdapter
     protected $VideoID;
     protected $Title;
     protected $Description;
+    protected $ViewCount;
+    public $initFlag = false;
 
-    public function __construct($ApiKey, $url)
+    protected $arRegexp = array(
+            '/[http|https]+:\/\/(?:www\.|)youtube\.com\/watch\?(?:.*)?v=([a-zA-Z0-9_\-]+)/i',
+            '/[http|https]+:\/\/(?:www\.|)youtube\.com\/embed\/([a-zA-Z0-9_\-]+)/i',
+            '/[http|https]+:\/\/(?:www\.|)youtu\.be\/([a-zA-Z0-9_\-]+)/i'
+        );
+
+    public function __construct($url, $ApiKey)
     {
         $this->RawUrl = $url;
-        $this->apikey = $ApiKey;
+        $this->ApiKey = $ApiKey;
 
+        $this->setVideoId();
         $this->getData();
-        //$json = file_get_contents();
+        $this->initFlag = true;
 
     }
 
     function getData(){
-        $data = file_get_contents("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyC9PKVMftl0xNdEVN6qqRqLwenOaEHZgAs&part=snippet&id=L397TWLwrUU");
-        $json = json_decode($data,true);
 
-        $this->Title = $json["items"][0]["snippet"]["title"];
-        $this->Description = $json["items"][0]["snippet"]["description"];
+        $dataSnippet = file_get_contents("https://www.googleapis.com/youtube/v3/videos?key=".$this->ApiKey."&part=snippet&id=".$this->VideoID);
+        $jsonSnippet = json_decode($dataSnippet,true);
 
+        $dataStatistics = file_get_contents("https://www.googleapis.com/youtube/v3/videos?key=".$this->ApiKey."&part=statistics&id=".$this->VideoID);
+        $jsonStatistics = json_decode($dataStatistics,true);
+
+        if($jsonSnippet != false) {
+            $this->Title = $jsonSnippet["items"][0]["snippet"]["title"];
+            $this->Description = $jsonSnippet["items"][0]["snippet"]["description"];
+            $this->ViewCount = $jsonStatistics["items"][0]["statistics"]["viewCount"];
+            return true;
+        }
+        else
+            return false;
+
+    }
+
+    function setVideoId(){
+        foreach ($this->arRegexp as $regexp)
+        {
+            preg_match($regexp, $this->RawUrl, $result);
+            if($result[1] != null)
+            {
+                $this->VideoID = $result[1];
+                return;
+            }
+        }
     }
 
     public function getServiceName()
@@ -54,6 +85,9 @@ class YouTubeServiceAd extends AbstractServiceAdapter
     public function getRawUrl()
     {
         return $this->rawUrl;
+    }
+    public function getViewCount(){
+        return $this->ViewCount;
     }
 
     function setId($url){

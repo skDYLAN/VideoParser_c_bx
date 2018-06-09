@@ -27,6 +27,9 @@ class ParserList extends CBitrixComponent{
         $this->handlerArParams();
         $this->setarResult();
 
+
+        //var_dump($res);
+
         $this->includeComponentTemplate();
 
     }

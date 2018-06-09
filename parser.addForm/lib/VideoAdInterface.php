@@ -15,9 +15,7 @@ interface VideoAdInterface
 
     public function getRawUrl();
 
-
-
-
+    public function getViewCount();
 
 }
 
