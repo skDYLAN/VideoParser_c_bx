@@ -6,6 +6,9 @@ class ParserList extends CBitrixComponent{
     public function handlerArParams(){
         $this->arParams['IBLOCK_ID'] = (int)$this->arParams['IBLOCK_ID'];
         $this->arParams['IBLOCK_COUNT'] = (int)$this->arParams['IBLOCK_COUNT'];
+
+        if(!isset($arParams["CACHE_TIME"]))
+            $arParams["CACHE_TIME"] = 36000000;
     }
 
     public function setarResult(){
@@ -25,12 +28,16 @@ class ParserList extends CBitrixComponent{
     public function executeComponent()
     {
         $this->handlerArParams();
-        $this->setarResult();
-
+        if(!Bitrix\Main\Loader::includeModule('iblock'))
+            return;
+        if($this->StartResultCache()) {
+            $this->setarResult();
+            $this->includeComponentTemplate();
+        }
 
         //var_dump($res);
 
-        $this->includeComponentTemplate();
+
 
     }
 }

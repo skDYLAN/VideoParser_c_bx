@@ -20,7 +20,7 @@ class ParserAddForm extends CBitrixComponent{
 
         if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["submit"] <> '')
         {
-            $this->getInfo($_POST["video_url"]);
+            $this->getInfo(trim($_POST["video_url"]));
 
             if($this->serviceAd->initFlag == true)
                 $this->addInfo();
